@@ -4,7 +4,7 @@ import { AppModule } from './app.module';
 import dotenv from 'dotenv'
 dotenv.config()
 
-console.log(process.env)
+// console.log(process.env)
 // console.log(Number(process.env.DB_PORT))
 
 async function bootstrap() {
