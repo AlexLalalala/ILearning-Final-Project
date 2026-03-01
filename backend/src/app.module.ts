@@ -2,6 +2,9 @@ import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { InventoryController } from './inventory/inventory.controller';
+import { ItemController } from './item/item.controller';
+import { UserController } from './user/user.controller';
 import dotenv from 'dotenv'
 dotenv.config()
 
@@ -20,7 +23,7 @@ dotenv.config()
       synchronize: true,
     })
   ],
-  controllers: [AppController],
+  controllers: [AppController, InventoryController, ItemController, UserController],
   providers: [AppService],
 })
 export class AppModule {}
