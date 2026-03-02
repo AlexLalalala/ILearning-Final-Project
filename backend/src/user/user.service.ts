@@ -23,11 +23,7 @@ export class UserService {
   }
 
   async create(createUserDto: CreateUserDto): Promise<User | null> {
-    const newUser: Omit<User, 'status' | 'is_admin' | 'registered_at'> = {
-      id: randomUUID(),
-      ...createUserDto,
-    };
-    const insertResult = await this.usersRepository.insert(newUser);
+    const insertResult = await this.usersRepository.insert(createUserDto);
     return { ...createUserDto, ...insertResult.raw[0] };
   }
 

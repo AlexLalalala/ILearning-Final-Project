@@ -15,8 +15,10 @@ export class CategoryService {
     return this.categoriesRepository.find();
   }
 
-  create(createCategoryDto: CreateCategoryDto) {
-    return this.categoriesRepository.insert(createCategoryDto);
+  async create(createCategoryDto: CreateCategoryDto): Promise<Category | null> {
+    const insertResult =
+      await this.categoriesRepository.insert(createCategoryDto);
+    return { ...createCategoryDto, ...insertResult.raw[0] };
   }
 
   remove(id: number) {
