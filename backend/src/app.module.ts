@@ -7,11 +7,11 @@ import { ItemController } from './item/item.controller';
 import { UserController } from './user/user.controller';
 import { UserModule } from './user/user.module';
 import { User } from './user/user.entity';
-import dotenv from 'dotenv'
+import dotenv from 'dotenv';
 import { UserService } from './user/user.service';
-dotenv.config()
-
-
+import { CategoryModule } from './category/category.module';
+import { Category } from './category/category.entity';
+dotenv.config();
 
 @Module({
   imports: [
@@ -22,10 +22,11 @@ dotenv.config()
       username: process.env.DB_USER,
       password: process.env.DB_PASSWORD,
       database: process.env.DB_DATABASE,
-      entities: [User],
+      entities: [User, Category],
       synchronize: true,
     }),
-    UserModule
+    UserModule,
+    CategoryModule,
   ],
   controllers: [AppController, InventoryController, ItemController],
   providers: [AppService],

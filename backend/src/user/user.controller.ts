@@ -13,7 +13,7 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { UserService } from './user.service';
 import type { UUID } from 'node:crypto';
 import { ParseUUIDPipe } from '@nestjs/common';
-import { IsNull, QueryFailedError } from 'typeorm';
+import { QueryFailedError } from 'typeorm';
 
 @Controller('user')
 export class UserController {
@@ -45,13 +45,16 @@ export class UserController {
   }
 
   @Post()
-  create(@Body(new ValidationPipe()) createUserDto: CreateUserDto) {
+  async create(@Body(new ValidationPipe()) createUserDto: CreateUserDto) {
     try {
-      return this.userService.create(createUserDto);
+      return await this.userService.create(createUserDto);
     } catch (error) {
-      if (error instanceof QueryFailedError) {
+      if (
+        error instanceof QueryFailedError &&
+        error.message.includes('duplicate key value')
+      ) {
         throw new HttpException(
-          `User with this id already exist`,
+          `User with this email already exist`,
           HttpStatus.BAD_REQUEST,
         );
       } else {
