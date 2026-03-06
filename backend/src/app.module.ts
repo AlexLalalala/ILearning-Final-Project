@@ -11,6 +11,8 @@ import dotenv from 'dotenv';
 import { UserService } from './user/user.service';
 import { CategoryModule } from './category/category.module';
 import { Category } from './category/category.entity';
+import { InventoryModule } from './inventory/inventory.module';
+import { Inventory } from './inventory/inventory.entity';
 dotenv.config();
 
 @Module({
@@ -22,13 +24,14 @@ dotenv.config();
       username: process.env.DB_USER,
       password: process.env.DB_PASSWORD,
       database: process.env.DB_DATABASE,
-      entities: [User, Category],
+      entities: [User, Category, Inventory],
       synchronize: true,
     }),
     UserModule,
     CategoryModule,
+    InventoryModule,
   ],
-  controllers: [AppController, InventoryController, ItemController],
+  controllers: [AppController, ItemController],
   providers: [AppService],
 })
 export class AppModule {}

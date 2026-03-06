@@ -22,7 +22,7 @@ export class UserService {
     return this.usersRepository.findOneBy({ id });
   }
 
-  async create(createUserDto: CreateUserDto): Promise<User | null> {
+  async create(createUserDto: CreateUserDto): Promise<User> {
     const insertResult = await this.usersRepository.insert(createUserDto);
     return { ...createUserDto, ...insertResult.raw[0] };
   }
