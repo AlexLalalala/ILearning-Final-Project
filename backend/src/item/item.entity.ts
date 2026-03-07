@@ -1,10 +1,24 @@
 import { IsString } from 'class-validator';
-import { Column, Entity, PrimaryColumn, PrimaryGeneratedColumn } from 'typeorm';
+import { Inventory } from 'src/inventory/inventory.entity';
+import {
+  Column,
+  Entity,
+  ManyToOne,
+  PrimaryColumn,
+  PrimaryGeneratedColumn,
+  RelationId,
+} from 'typeorm';
 
 @Entity()
 export class Item {
   @PrimaryGeneratedColumn()
   id: number;
+
+  @ManyToOne(() => Inventory, { nullable: false })
+  inventory: Inventory;
+
+  @RelationId((item: Item) => item.inventory)
+  inventory_id: number;
 
   @Column({ nullable: true })
   short_text1?: string;
