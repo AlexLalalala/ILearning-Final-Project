@@ -1,3 +1,4 @@
+import { Category } from 'src/category/category.entity';
 import { User } from 'src/user/user.entity';
 import {
   Column,
@@ -7,6 +8,8 @@ import {
   ManyToOne,
   PrimaryGeneratedColumn,
   CreateDateColumn,
+  OneToOne,
+  RelationId,
 } from 'typeorm';
 
 @Entity()
@@ -16,6 +19,9 @@ export class Inventory {
 
   @ManyToOne(() => User, (user) => user.inventories)
   created_by: User;
+
+  @RelationId((inventory: Inventory) => inventory.created_by)
+  created_by_id: number;
 
   @CreateDateColumn()
   created_at: Date;
@@ -28,6 +34,12 @@ export class Inventory {
 
   @Column({ nullable: true })
   image_url: string;
+
+  @ManyToOne(() => Category, (category) => category.id)
+  category: Category;
+
+  @RelationId((inventory: Inventory) => inventory.category)
+  category_id: number;
 
   @ManyToMany(() => User)
   @JoinTable()

@@ -4,6 +4,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Inventory } from './inventory.entity';
 import { Repository } from 'typeorm';
 import { User } from 'src/user/user.entity';
+import { Category } from 'src/category/category.entity';
 // import { UpdateInventoryDto } from './dto/update-inventory.dto';
 
 @Injectable()
@@ -18,8 +19,9 @@ export class InventoryService {
     user: User | undefined = undefined,
   ) {
     const insertResult = await this.inventoriesRepository.insert({
-      created_by: user,
       ...createInventoryDto,
+      created_by: user,
+      category: { id: createInventoryDto.category } as Category,
     });
     return { ...createInventoryDto, ...insertResult.raw[0] };
   }

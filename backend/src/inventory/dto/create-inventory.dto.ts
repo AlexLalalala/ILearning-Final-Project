@@ -1,4 +1,4 @@
-import { IsOptional, IsString, IsUrl } from 'class-validator';
+import { IsOptional, IsString, IsUrl, IsInt } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
 export class CreateInventoryDto {
@@ -17,6 +17,15 @@ export class CreateInventoryDto {
   @IsOptional()
   @IsString()
   description?: string;
+
+  @ApiProperty({
+    description: "Inventory's Category ID",
+    example: '2',
+    required: false,
+  })
+  @IsOptional()
+  @IsInt()
+  category?: number;
 
   @ApiProperty({
     description: 'Optional URL link to an image',
