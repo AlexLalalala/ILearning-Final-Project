@@ -21,18 +21,26 @@ export class User {
   @Column({ unique: true })
   email: string;
 
+  @Column({ name: 'password_hash' })
+  passwordHash: string;
+
+  @Column()
+  salt: string;
+
   @Column({ default: 'active' })
   status: 'active' | 'banned';
 
-  @Column({ default: false })
-  is_admin: boolean;
+  @Column({ default: false, name: 'is_admin' })
+  isAdmin: boolean;
 
-  @CreateDateColumn()
-  registered_at: Date;
+  @CreateDateColumn({ name: 'registered_at' })
+  registeredAt: Date;
 
-  @OneToMany(() => Inventory, (inventory) => inventory.created_by)
+  @OneToMany(() => Inventory, (inventory) => inventory.created_by, {
+    onDelete: 'CASCADE',
+  })
   inventories: Inventory[];
 
-  @ManyToMany(() => Inventory)
-  edit_accesses: Inventory[];
+  @ManyToMany(() => Inventory, { onDelete: 'SET NULL' })
+  editAccesses: Inventory[];
 }

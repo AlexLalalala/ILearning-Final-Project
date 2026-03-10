@@ -6,6 +6,9 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { randomUUID } from 'node:crypto';
 import type { UUID } from 'node:crypto';
 import type { DeleteResult } from 'typeorm';
+import * as bcrypt from 'bcrypt';
+
+type FindUserBy = { id: UUID } | { email: string };
 
 @Injectable()
 export class UserService {
@@ -18,12 +21,18 @@ export class UserService {
     return this.usersRepository.find();
   }
 
-  findOne(id: UUID): Promise<User | null> {
-    return this.usersRepository.findOneBy({ id });
+  findOne(findBy: FindUserBy): Promise<User | null> {
+    return this.usersRepository.findOneBy(findBy);
   }
 
   async create(createUserDto: CreateUserDto): Promise<User> {
-    const insertResult = await this.usersRepository.insert(createUserDto);
+    const salt = await bcrypt.genSalt();
+    const passwordHash = await bcrypt.hash(createUserDto.password, salt);
+    const insertResult = await this.usersRepository.insert({
+      salt,
+      passwordHash,
+      ...createUserDto,
+    });
     return { ...createUserDto, ...insertResult.raw[0] };
   }
 

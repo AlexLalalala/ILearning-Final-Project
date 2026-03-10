@@ -17,7 +17,7 @@ export class Inventory {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @ManyToOne(() => User, (user) => user.inventories)
+  @ManyToOne(() => User, (user) => user.inventories, { onDelete: 'SET NULL' })
   created_by: User;
 
   @RelationId((inventory: Inventory) => inventory.created_by)

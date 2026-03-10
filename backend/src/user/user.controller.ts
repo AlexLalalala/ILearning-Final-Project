@@ -33,7 +33,7 @@ export class UserController {
 
   @Get(':id')
   async findOne(@Param('id', ParseUUIDPipe) id: UUID) {
-    const response = await this.userService.findOne(id);
+    const response = await this.userService.findOne({ id });
     if (response) {
       return response;
     } else {

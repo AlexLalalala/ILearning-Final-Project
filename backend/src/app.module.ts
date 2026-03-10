@@ -1,3 +1,4 @@
+import { AuthModule } from './auth/auth.module';
 import { ItemModule } from './item/item.module';
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
@@ -13,11 +14,11 @@ import { ItemService } from './item/item.service';
 import { User } from './user/user.entity';
 import { UserModule } from './user/user.module';
 import { Item } from './item/item.entity';
+import { ConfigModule } from '@nestjs/config';
 dotenv.config();
 
 @Module({
   imports: [
-    ItemModule,
     TypeOrmModule.forRoot({
       type: 'postgres',
       host: process.env.DB_HOST,
@@ -28,9 +29,14 @@ dotenv.config();
       entities: [User, Category, Inventory, Item],
       synchronize: true,
     }),
+    ConfigModule.forRoot({
+      isGlobal: true,
+    }),
     UserModule,
     CategoryModule,
     InventoryModule,
+    AuthModule,
+    ItemModule,
   ],
   controllers: [AppController],
   providers: [AppService],
