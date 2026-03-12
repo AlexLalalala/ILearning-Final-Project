@@ -15,6 +15,7 @@ import { User } from './user/user.entity';
 import { UserModule } from './user/user.module';
 import { Item } from './item/item.entity';
 import { ConfigModule } from '@nestjs/config';
+import { CaslModule } from './casl/casl.module';
 dotenv.config();
 
 @Module({
@@ -37,6 +38,7 @@ dotenv.config();
     InventoryModule,
     AuthModule,
     ItemModule,
+    CaslModule,
   ],
   controllers: [AppController],
   providers: [AppService],

@@ -5,22 +5,21 @@ import { Inventory } from './inventory.entity';
 import { Repository } from 'typeorm';
 import { User } from 'src/user/user.entity';
 import { Category } from 'src/category/category.entity';
+import { CaslAbilityFactory } from 'src/casl/casl-ability.factory/casl-ability.factory';
 // import { UpdateInventoryDto } from './dto/update-inventory.dto';
-
+import type { UUID } from 'crypto';
 @Injectable()
 export class InventoryService {
   constructor(
     @InjectRepository(Inventory)
     private inventoriesRepository: Repository<Inventory>,
+    private caslAbilityFactory: CaslAbilityFactory,
   ) {}
 
-  async create(
-    createInventoryDto: CreateInventoryDto,
-    user: User | undefined = undefined,
-  ) {
+  async create(createInventoryDto: CreateInventoryDto, userId: UUID) {
     const insertResult = await this.inventoriesRepository.insert({
       ...createInventoryDto,
-      createdBy: user,
+      createdBy: { id: userId } as User,
       category: { id: createInventoryDto.category } as Category,
     });
     return { ...createInventoryDto, ...insertResult.raw[0] };
@@ -34,10 +33,6 @@ export class InventoryService {
     const inventory = await this.inventoriesRepository.findOneBy({ id });
     return inventory;
   }
-
-  // update(id: number, updateInventoryDto: UpdateInventoryDto) {
-  //   return `This action updates a #id inventory`;
-  // }
 
   remove(id: number) {
     return this.inventoriesRepository.delete(id);
