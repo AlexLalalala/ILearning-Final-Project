@@ -10,11 +10,13 @@ import {
   HttpException,
   HttpStatus,
   Patch,
+  UseGuards,
 } from '@nestjs/common';
 import { CreateItemDto } from './dto/create-item.dto';
 import { ItemService } from './item.service';
 import { UpdateItemDto } from './dto/update-item.dto';
 import { UpdateDateColumn } from 'typeorm';
+import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 
 @Controller('item')
 export class ItemController {
@@ -39,11 +41,13 @@ export class ItemController {
   }
 
   @Post()
+  @UseGuards(JwtAuthGuard)
   create(@Body(new ValidationPipe()) createItemDto: CreateItemDto) {
     return this.itemService.create(createItemDto);
   }
 
   @Patch(':id')
+  @UseGuards(JwtAuthGuard)
   async update(
     @Param('id', ParseIntPipe) id: number,
     @Body(new ValidationPipe()) updateItemDto: UpdateItemDto,
@@ -59,6 +63,7 @@ export class ItemController {
   }
 
   @Delete(':id')
+  @UseGuards(JwtAuthGuard)
   async remove(@Param('id') id: number) {
     const result = await this.itemService.remove(id);
     if (!result.affected) {

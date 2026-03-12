@@ -8,12 +8,14 @@ import {
   ValidationPipe,
   HttpException,
   HttpStatus,
+  UseGuards,
 } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UserService } from './user.service';
 import type { UUID } from 'node:crypto';
 import { ParseUUIDPipe } from '@nestjs/common';
 import { QueryFailedError } from 'typeorm';
+import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 
 @Controller('user')
 export class UserController {
@@ -67,6 +69,7 @@ export class UserController {
   }
 
   @Delete(':id')
+  @UseGuards(JwtAuthGuard)
   async remove(@Param('id', ParseUUIDPipe) id: UUID) {
     const result = await this.userService.remove(id);
     if (result.affected === 0) {

@@ -49,6 +49,7 @@ export class CategoryController {
   }
 
   @Delete(':id')
+  @UseGuards(JwtAuthGuard, AdminGuard)
   async remove(@Param('id', ParseIntPipe) id: number) {
     const result = await this.categoriesService.remove(id);
     if (result.affected === 0) {
