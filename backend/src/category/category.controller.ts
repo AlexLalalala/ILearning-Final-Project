@@ -8,11 +8,14 @@ import {
   Param,
   ParseIntPipe,
   Post,
+  UseGuards,
   ValidationPipe,
 } from '@nestjs/common';
 import { CreateCategoryDto } from './dto/create-category.dto';
 import { CategoryService } from './category.service';
 import { QueryFailedError } from 'typeorm';
+import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
+import { AdminGuard } from 'src/guards/admin.guard';
 
 @Controller('category')
 export class CategoryController {
@@ -24,6 +27,7 @@ export class CategoryController {
   }
 
   @Post()
+  @UseGuards(JwtAuthGuard, AdminGuard)
   async create(
     @Body(new ValidationPipe()) createCategoryDto: CreateCategoryDto,
   ) {
