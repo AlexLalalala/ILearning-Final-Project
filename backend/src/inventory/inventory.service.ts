@@ -20,7 +20,7 @@ export class InventoryService {
   ) {
     const insertResult = await this.inventoriesRepository.insert({
       ...createInventoryDto,
-      created_by: user,
+      createdBy: user,
       category: { id: createInventoryDto.category } as Category,
     });
     return { ...createInventoryDto, ...insertResult.raw[0] };

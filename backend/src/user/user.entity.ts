@@ -36,7 +36,7 @@ export class User {
   @CreateDateColumn({ name: 'registered_at' })
   registeredAt: Date;
 
-  @OneToMany(() => Inventory, (inventory) => inventory.created_by, {
+  @OneToMany(() => Inventory, (inventory) => inventory.createdBy, {
     onDelete: 'CASCADE',
   })
   inventories: Inventory[];
