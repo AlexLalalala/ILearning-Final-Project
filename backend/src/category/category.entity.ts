@@ -19,6 +19,6 @@ export class Category {
   @OneToMany(() => Inventory, (inventory) => inventory.category)
   inventories: Inventory[];
 
-  @VersionColumn()
+  @VersionColumn({ default: 0 })
   version: number;
 }
