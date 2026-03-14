@@ -16,6 +16,9 @@ import { CategoryService } from './category.service';
 import { QueryFailedError } from 'typeorm';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 import { AdminGuard } from 'src/guards/admin.guard';
+import { Messages } from 'src/constants/messages';
+
+const object = 'Category';
 
 @Controller('category')
 export class CategoryController {
@@ -38,10 +41,13 @@ export class CategoryController {
         error instanceof QueryFailedError &&
         error.message.includes('duplicate key value')
       ) {
-        throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
+        throw new HttpException(
+          Messages.alreadyExists(object, 'name'),
+          HttpStatus.BAD_REQUEST,
+        );
       } else {
         throw new HttpException(
-          error.message,
+          Messages.GENERAL_ERROR,
           HttpStatus.INTERNAL_SERVER_ERROR,
         );
       }
@@ -54,7 +60,7 @@ export class CategoryController {
     const result = await this.categoriesService.remove(id);
     if (result.affected === 0) {
       throw new HttpException(
-        `Category with id: ${id} can not found`,
+        Messages.notFound(object, id),
         HttpStatus.BAD_REQUEST,
       );
     }

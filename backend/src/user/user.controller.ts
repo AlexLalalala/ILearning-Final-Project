@@ -16,7 +16,9 @@ import type { UUID } from 'node:crypto';
 import { ParseUUIDPipe } from '@nestjs/common';
 import { QueryFailedError } from 'typeorm';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
+import { Messages } from 'src/constants/messages';
 
+const object = 'User';
 @Controller('user')
 export class UserController {
   constructor(private userService: UserService) {}
@@ -27,7 +29,7 @@ export class UserController {
       return this.userService.findAll();
     } catch (error) {
       throw new HttpException(
-        'Something went wrong',
+        Messages.GENERAL_ERROR,
         HttpStatus.INTERNAL_SERVER_ERROR,
       );
     }
@@ -40,7 +42,7 @@ export class UserController {
       return response;
     } else {
       throw new HttpException(
-        `User with id: ${id} can not found`,
+        Messages.notFound(object, id),
         HttpStatus.BAD_REQUEST,
       );
     }
@@ -56,12 +58,12 @@ export class UserController {
         error.message.includes('duplicate key value')
       ) {
         throw new HttpException(
-          `User with this email already exist`,
+          Messages.alreadyExists(object, 'email'),
           HttpStatus.BAD_REQUEST,
         );
       } else {
         throw new HttpException(
-          `Internal Server Error`,
+          Messages.GENERAL_ERROR,
           HttpStatus.INTERNAL_SERVER_ERROR,
         );
       }
@@ -74,7 +76,7 @@ export class UserController {
     const result = await this.userService.remove(id);
     if (result.affected === 0) {
       throw new HttpException(
-        `User with id: ${id} can not found`,
+        Messages.notFound(object, id),
         HttpStatus.BAD_REQUEST,
       );
     }

@@ -17,7 +17,9 @@ import { ItemService } from './item.service';
 import { UpdateItemDto } from './dto/update-item.dto';
 import { UpdateDateColumn } from 'typeorm';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
+import { Messages } from 'src/constants/messages';
 
+const object = 'Item';
 @Controller('item')
 export class ItemController {
   constructor(private itemService: ItemService) {}
@@ -34,7 +36,7 @@ export class ItemController {
       return result;
     } else {
       throw new HttpException(
-        `Item with id: ${id} can not be found`,
+        Messages.notFound(object, id),
         HttpStatus.BAD_REQUEST,
       );
     }
@@ -55,7 +57,7 @@ export class ItemController {
     const result = await this.itemService.update(id, updateItemDto);
     if (!result.affected) {
       throw new HttpException(
-        `Item with id: ${id} can not be found`,
+        Messages.notFound(object, id),
         HttpStatus.BAD_REQUEST,
       );
     }
@@ -68,7 +70,7 @@ export class ItemController {
     const result = await this.itemService.remove(id);
     if (!result.affected) {
       throw new HttpException(
-        `Item with id: ${id} can not be found`,
+        Messages.notFound(object, id),
         HttpStatus.BAD_REQUEST,
       );
     }
