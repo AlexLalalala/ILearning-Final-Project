@@ -1,5 +1,6 @@
 import { IsString } from 'class-validator';
 import { Inventory } from 'src/inventory/inventory.entity';
+import { User } from 'src/user/user.entity';
 import {
   Column,
   Entity,
@@ -20,6 +21,12 @@ export class Item {
 
   @RelationId((item: Item) => item.inventory)
   inventory_id: number;
+
+  @ManyToOne(() => User)
+  createdBy: User;
+
+  @RelationId((item: Item) => item.createdBy)
+  CreatedById: number;
 
   @Column({ nullable: true })
   short_text1?: string;

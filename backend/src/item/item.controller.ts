@@ -11,6 +11,7 @@ import {
   HttpStatus,
   Patch,
   UseGuards,
+  Req,
 } from '@nestjs/common';
 import { CreateItemDto } from './dto/create-item.dto';
 import { ItemService } from './item.service';
@@ -18,6 +19,7 @@ import { UpdateItemDto } from './dto/update-item.dto';
 import { UpdateDateColumn } from 'typeorm';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 import { Messages } from 'src/constants/messages';
+import { UserPayload } from 'src/auth/auth.user-payload';
 
 const object = 'Item';
 @Controller('item')
@@ -44,8 +46,11 @@ export class ItemController {
 
   @Post()
   @UseGuards(JwtAuthGuard)
-  create(@Body(new ValidationPipe()) createItemDto: CreateItemDto) {
-    return this.itemService.create(createItemDto);
+  create(
+    @Body(new ValidationPipe()) createItemDto: CreateItemDto,
+    @Req() { user }: { user: UserPayload },
+  ) {
+    return this.itemService.create(createItemDto, user);
   }
 
   @Patch(':id')
