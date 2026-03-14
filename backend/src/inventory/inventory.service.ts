@@ -1,4 +1,9 @@
-import { Injectable } from '@nestjs/common';
+import {
+  ForbiddenException,
+  HttpException,
+  HttpStatus,
+  Injectable,
+} from '@nestjs/common';
 import { CreateInventoryDto } from './dto/create-inventory.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Inventory } from './inventory.entity';
@@ -8,6 +13,11 @@ import { Category } from 'src/category/category.entity';
 import { CaslAbilityFactory } from 'src/casl/casl-ability.factory/casl-ability.factory';
 import type { UUID } from 'crypto';
 import { UpdateInventoryDto } from './dto/update-inventory.dto';
+import { UserPayload } from 'src/auth/auth.user-payload';
+import { Messages } from 'src/constants/messages';
+import { Action } from 'src/casl/casl.action';
+
+const object = 'Inventory';
 @Injectable()
 export class InventoryService {
   constructor(
@@ -29,11 +39,43 @@ export class InventoryService {
     return this.inventoriesRepository.find();
   }
 
-  update(id: number, updateInventoryDto: UpdateInventoryDto) {
-    return this.inventoriesRepository.update(id, {
-      ...updateInventoryDto,
-      category: { id: updateInventoryDto.category } as Category,
-    });
+  async update(
+    id: number,
+    updateInventoryDto: UpdateInventoryDto,
+    user: UserPayload | undefined = undefined,
+  ) {
+    const inventory = await this.findOne(id);
+    if (!inventory) {
+      throw new HttpException(
+        Messages.notFound(object, id),
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+    if (user) {
+      const ability = this.caslAbilityFactory.createForUser(user);
+      if (ability.cannot(Action.Update, inventory)) {
+        throw new ForbiddenException(Messages.FORBIDDEN);
+      }
+    }
+
+    const { editAccess, category, ...partialUpdateInventory } =
+      updateInventoryDto;
+
+    const updatedInventory: Inventory = {
+      ...inventory,
+      ...partialUpdateInventory,
+    };
+
+    if (editAccess) {
+      updatedInventory.editAccess = editAccess.map((id) => ({ id }) as User);
+    }
+
+    if (category) {
+      updatedInventory.category = { id: category } as Category;
+    }
+
+    const result = this.inventoriesRepository.save(updatedInventory);
+    return updatedInventory;
   }
 
   async findOne(id: number): Promise<Inventory | null> {

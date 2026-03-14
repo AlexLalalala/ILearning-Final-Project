@@ -45,4 +45,7 @@ export class Inventory {
   @ManyToMany(() => User)
   @JoinTable()
   editAccess: User[];
+
+  @RelationId((inventory: Inventory) => inventory.editAccess, 'edit_access_ids')
+  editAccessIds: Array<User['id']>;
 }

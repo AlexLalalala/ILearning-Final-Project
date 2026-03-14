@@ -23,4 +23,10 @@ export class UpdateInventoryDto extends PartialType(CreateInventoryDto) {
     example: 'example2.test',
   })
   imageUrl?: string | undefined;
+
+  @ApiProperty({
+    description: "Array of users' UUID who have edit access",
+    example: ['3d9156fb-4df1-4224-8e83-c8cd2aa25155'],
+  })
+  editAccess?: string[] | undefined;
 }

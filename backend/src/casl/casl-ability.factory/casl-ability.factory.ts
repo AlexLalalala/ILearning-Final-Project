@@ -33,7 +33,7 @@ export class CaslAbilityFactory {
     can(Action.Delete, Inventory, { createdById: user.userId });
 
     can(Action.Update, Inventory, {
-      editAccess: { $elemMatch: { id: { $eq: user.userId } } },
+      editAccessIds: { $in: [user.userId] },
     });
 
     return build({
