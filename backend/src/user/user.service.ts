@@ -17,11 +17,30 @@ export class UserService {
   ) {}
 
   findAll(): Promise<User[]> {
-    return this.usersRepository.find();
+    return this.usersRepository.find({
+      select: {
+        email: true,
+        name: true,
+        id: true,
+        status: true,
+        isAdmin: true,
+        registeredAt: true,
+      },
+    });
   }
 
   findOne(findBy: FindUserBy): Promise<User | null> {
-    return this.usersRepository.findOneBy(findBy);
+    return this.usersRepository.findOne({
+      where: findBy,
+      select: {
+        email: true,
+        name: true,
+        id: true,
+        status: true,
+        isAdmin: true,
+        registeredAt: true,
+      },
+    });
   }
 
   async create(createUserDto: CreateUserDto): Promise<User> {

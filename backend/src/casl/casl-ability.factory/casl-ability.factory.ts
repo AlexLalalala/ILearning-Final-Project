@@ -32,6 +32,10 @@ export class CaslAbilityFactory {
     can(Action.Update, Inventory, { createdById: user.userId });
     can(Action.Delete, Inventory, { createdById: user.userId });
 
+    can(Action.Update, Inventory, {
+      editAccess: { $elemMatch: { id: { $eq: user.userId } } },
+    });
+
     return build({
       detectSubjectType: (item) => {
         return item.constructor as ExtractSubjectType<Subjects>;

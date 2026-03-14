@@ -34,5 +34,5 @@ export class CreateInventoryDto {
   })
   @IsOptional()
   @IsUrl()
-  image_url?: string;
+  imageUrl?: string;
 }

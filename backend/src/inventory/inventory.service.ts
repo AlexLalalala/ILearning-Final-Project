@@ -6,8 +6,8 @@ import { Repository } from 'typeorm';
 import { User } from 'src/user/user.entity';
 import { Category } from 'src/category/category.entity';
 import { CaslAbilityFactory } from 'src/casl/casl-ability.factory/casl-ability.factory';
-// import { UpdateInventoryDto } from './dto/update-inventory.dto';
 import type { UUID } from 'crypto';
+import { UpdateInventoryDto } from './dto/update-inventory.dto';
 @Injectable()
 export class InventoryService {
   constructor(
@@ -27,6 +27,13 @@ export class InventoryService {
 
   findAll(): Promise<Inventory[]> {
     return this.inventoriesRepository.find();
+  }
+
+  update(id: number, updateInventoryDto: UpdateInventoryDto) {
+    return this.inventoriesRepository.update(id, {
+      ...updateInventoryDto,
+      category: { id: updateInventoryDto.category } as Category,
+    });
   }
 
   async findOne(id: number): Promise<Inventory | null> {

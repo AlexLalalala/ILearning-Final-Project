@@ -17,6 +17,7 @@ import { ParseUUIDPipe } from '@nestjs/common';
 import { QueryFailedError } from 'typeorm';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 import { Messages } from 'src/constants/messages';
+import { AdminGuard } from 'src/guards/admin.guard';
 
 const object = 'User';
 @Controller('user')
@@ -24,6 +25,7 @@ export class UserController {
   constructor(private userService: UserService) {}
 
   @Get()
+  @UseGuards(JwtAuthGuard, AdminGuard)
   findAll() {
     try {
       return this.userService.findAll();
@@ -36,6 +38,7 @@ export class UserController {
   }
 
   @Get(':id')
+  @UseGuards(JwtAuthGuard, AdminGuard)
   async findOne(@Param('id', ParseUUIDPipe) id: UUID) {
     const response = await this.userService.findOne({ id });
     if (response) {
@@ -71,7 +74,7 @@ export class UserController {
   }
 
   @Delete(':id')
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, AdminGuard)
   async remove(@Param('id', ParseUUIDPipe) id: UUID) {
     const result = await this.userService.remove(id);
     if (result.affected === 0) {

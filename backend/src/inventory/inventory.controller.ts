@@ -12,6 +12,7 @@ import {
   UseGuards,
   Req,
   ForbiddenException,
+  Patch,
 } from '@nestjs/common';
 import { CreateInventoryDto } from './dto/create-inventory.dto';
 import { InventoryService } from './inventory.service';
@@ -24,6 +25,10 @@ import { CaslAbilityFactory } from 'src/casl/casl-ability.factory/casl-ability.f
 import { Action } from 'src/casl/casl.action';
 import { Inventory } from './inventory.entity';
 import { UserPayload } from 'src/auth/auth.user-payload';
+import { UpdateInventoryDto } from './dto/update-inventory.dto';
+import { Messages } from 'src/constants/messages';
+
+const object = 'Inventory';
 
 @Controller('inventory')
 export class InventoryController {
@@ -39,7 +44,7 @@ export class InventoryController {
       return this.inventoriesService.findAll();
     } catch (error) {
       throw new HttpException(
-        'Something went wrong',
+        Messages.GENERAL_ERROR,
         HttpStatus.INTERNAL_SERVER_ERROR,
       );
     }
@@ -52,7 +57,7 @@ export class InventoryController {
       return response;
     } else {
       throw new HttpException(
-        `Inventory with id: ${id} can not be found`,
+        Messages.notFound(object, id),
         HttpStatus.BAD_REQUEST,
       );
     }
@@ -61,10 +66,33 @@ export class InventoryController {
   @Post()
   @UseGuards(JwtAuthGuard)
   async create(
-    @Body(new ValidationPipe()) createPostDto: CreateInventoryDto,
+    @Body(new ValidationPipe()) createInventoryDto: CreateInventoryDto,
     @Req() req,
   ) {
-    return this.inventoriesService.create(createPostDto, req.user.userId);
+    return this.inventoriesService.create(createInventoryDto, req.user.userId);
+  }
+
+  @Patch(':id')
+  @UseGuards(JwtAuthGuard)
+  async update(
+    @Param('id', ParseIntPipe) id: number,
+    @Body(new ValidationPipe()) updateInventoryDto: UpdateInventoryDto,
+    @Req() { user }: { user: UserPayload },
+  ) {
+    const inventory = await this.inventoriesService.findOne(id);
+    if (!inventory) {
+      throw new HttpException(
+        Messages.notFound(object, id),
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+    const ability = this.caslAbilityFactory.createForUser(user);
+    if (ability.cannot(Action.Update, inventory)) {
+      throw new ForbiddenException(Messages.FORBIDDEN);
+    }
+
+    const result = this.inventoriesService.update(id, updateInventoryDto);
+    return result;
   }
 
   @Delete(':id')
@@ -73,16 +101,14 @@ export class InventoryController {
     const inventory = await this.inventoriesService.findOne(id);
     if (!inventory)
       throw new HttpException(
-        `Inventory with id: ${id} can not be found`,
+        Messages.notFound(object, id),
         HttpStatus.BAD_REQUEST,
       );
 
     const user: UserPayload = req.user;
     const ability = this.caslAbilityFactory.createForUser(user);
     if (ability.cannot(Action.Delete, inventory)) {
-      throw new ForbiddenException(
-        'You do NOT have permission to do this action',
-      );
+      throw new ForbiddenException(Messages.FORBIDDEN);
     }
 
     const result = await this.inventoriesService.remove(id);
