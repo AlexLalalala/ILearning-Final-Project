@@ -6,6 +6,7 @@ import {
   PrimaryColumn,
   OneToMany,
   ManyToMany,
+  VersionColumn,
 } from 'typeorm';
 import type { UUID } from 'node:crypto';
 import { Inventory } from 'src/inventory/inventory.entity';
@@ -43,4 +44,7 @@ export class User {
 
   @ManyToMany(() => Inventory, { onDelete: 'SET NULL' })
   editAccesses: Inventory[];
+
+  @VersionColumn({ default: 0 })
+  version: number;
 }

@@ -79,19 +79,7 @@ export class InventoryController {
     @Body(new ValidationPipe()) updateInventoryDto: UpdateInventoryDto,
     @Req() { user }: { user: UserPayload },
   ) {
-    const inventory = await this.inventoriesService.findOne(id);
-    if (!inventory) {
-      throw new HttpException(
-        Messages.notFound(object, id),
-        HttpStatus.BAD_REQUEST,
-      );
-    }
-    const ability = this.caslAbilityFactory.createForUser(user);
-    if (ability.cannot(Action.Update, inventory)) {
-      throw new ForbiddenException(Messages.FORBIDDEN);
-    }
-
-    const result = this.inventoriesService.update(id, updateInventoryDto);
+    const result = this.inventoriesService.update(id, updateInventoryDto, user);
     return result;
   }
 

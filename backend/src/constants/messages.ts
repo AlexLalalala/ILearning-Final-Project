@@ -4,6 +4,7 @@ import type { UUID } from 'crypto';
 export const Messages = {
   FORBIDDEN: 'You do NOT have permission to do this action',
   GENERAL_ERROR: 'Something went wrong',
+  WRONG_VERSION: 'Your object version was outdated',
   alreadyExists: (object: string, duplicated_field) =>
     `${object} with this ${duplicated_field} already exists`,
   notFound: (object: string, id: string | number | UUID) =>

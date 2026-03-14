@@ -5,6 +5,7 @@ import {
   OneToMany,
   PrimaryGeneratedColumn,
   Unique,
+  VersionColumn,
 } from 'typeorm';
 
 @Entity()
@@ -17,4 +18,7 @@ export class Category {
 
   @OneToMany(() => Inventory, (inventory) => inventory.category)
   inventories: Inventory[];
+
+  @VersionColumn()
+  version: number;
 }

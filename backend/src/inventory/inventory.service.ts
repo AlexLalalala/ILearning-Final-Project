@@ -51,6 +51,9 @@ export class InventoryService {
         HttpStatus.BAD_REQUEST,
       );
     }
+    if (inventory.version !== updateInventoryDto.version) {
+      throw new HttpException(Messages.WRONG_VERSION, HttpStatus.CONFLICT);
+    }
     if (user) {
       const ability = this.caslAbilityFactory.createForUser(user);
       if (ability.cannot(Action.Update, inventory)) {
@@ -74,12 +77,18 @@ export class InventoryService {
       updatedInventory.category = { id: category } as Category;
     }
 
-    const result = this.inventoriesRepository.save(updatedInventory);
-    return updatedInventory;
+    try {
+      const result = await this.inventoriesRepository.save(updatedInventory);
+      return result;
+    } catch (error) {
+      throw new HttpException(error.message, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
   }
 
   async findOne(id: number): Promise<Inventory | null> {
-    const inventory = await this.inventoriesRepository.findOneBy({ id });
+    const inventory = await this.inventoriesRepository.findOne({
+      where: { id },
+    });
     return inventory;
   }
 

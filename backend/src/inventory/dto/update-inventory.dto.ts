@@ -1,6 +1,7 @@
 import { PartialType } from '@nestjs/mapped-types';
 import { CreateInventoryDto } from './create-inventory.dto';
 import { ApiProperty } from '@nestjs/swagger';
+import { IsNumber } from 'class-validator';
 
 export class UpdateInventoryDto extends PartialType(CreateInventoryDto) {
   @ApiProperty({ description: 'Title', example: 'Candies' })
@@ -29,4 +30,12 @@ export class UpdateInventoryDto extends PartialType(CreateInventoryDto) {
     example: ['3d9156fb-4df1-4224-8e83-c8cd2aa25155'],
   })
   editAccess?: string[] | undefined;
+
+  @ApiProperty({
+    description: 'Version (for optimistic locking)',
+    example: '111',
+    required: true,
+  })
+  @IsNumber()
+  version: number;
 }

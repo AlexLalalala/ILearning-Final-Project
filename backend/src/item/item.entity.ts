@@ -7,6 +7,7 @@ import {
   PrimaryColumn,
   PrimaryGeneratedColumn,
   RelationId,
+  VersionColumn,
 } from 'typeorm';
 
 @Entity()
@@ -64,4 +65,7 @@ export class Item {
 
   @Column({ nullable: true })
   bool3: boolean;
+
+  @VersionColumn({ default: 0 })
+  version: number;
 }

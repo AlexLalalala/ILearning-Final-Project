@@ -11,6 +11,7 @@ import {
   CreateDateColumn,
   OneToOne,
   RelationId,
+  VersionColumn,
 } from 'typeorm';
 
 @Entity()
@@ -48,4 +49,7 @@ export class Inventory {
 
   @RelationId((inventory: Inventory) => inventory.editAccess, 'edit_access_ids')
   editAccessIds: Array<User['id']>;
+
+  @VersionColumn({ default: 0 })
+  version: number;
 }
