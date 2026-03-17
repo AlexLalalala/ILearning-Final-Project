@@ -43,6 +43,10 @@ export class UserService {
     });
   }
 
+  findOneAuth(email: string): Promise<User | null> {
+    return this.usersRepository.findOneBy({ email });
+  }
+
   async create(createUserDto: CreateUserDto): Promise<User> {
     const salt = await bcrypt.genSalt();
     const passwordHash = await bcrypt.hash(createUserDto.password, salt);
